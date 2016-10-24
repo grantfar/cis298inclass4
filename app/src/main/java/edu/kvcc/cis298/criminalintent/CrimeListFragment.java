@@ -8,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -44,18 +46,53 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder {
+    private class CrimeHolder extends RecyclerView.ViewHolder
+        implements View.OnClickListener {
 
         //Add a title variable to the viewHolder
-        public TextView mTitleTextView;
+        private TextView mTitleTextView;
+        private TextView mDateTextView;
+        private CheckBox mSolvedCheckBox;
+
+        //Variable to hold a single crime
+        private Crime mCrime;
 
         //Constructor for the CrimeHolder.
         public CrimeHolder(View itemView) {
             //Call the parent constructor
             super(itemView);
+            itemView.setOnClickListener(this);
+
             //Get the itemView that is passed into this constructor and assign it
             //to the class level variable.
-            mTitleTextView = (TextView) itemView;
+            mTitleTextView = (TextView) itemView
+                    .findViewById(R.id.list_item_crime_title_text_view);
+            mDateTextView = (TextView) itemView
+                    .findViewById(R.id.list_item_crime_date_text_view);
+            mSolvedCheckBox = (CheckBox) itemView
+                    .findViewById(R.id.list_item_crime_solved_check_box);
+        }
+
+        //Write a method in here to take in an instance of a crime
+        //and then assign the crime properties to the various
+        //view widgets
+        public  void bindCrime(Crime crime) {
+            //Assign the passed in crime to the class level one
+            //This may not be needed? Could use the local one.
+            //Maybe we will need it later on.
+            mCrime = crime;
+            //Set the widget controls with the data from the crime.
+            mTitleTextView.setText(mCrime.getTitle());
+            mDateTextView.setText(mCrime.getDate().toString());
+            mSolvedCheckBox.setChecked(mCrime.isSolved());
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getActivity(),
+                    mCrime.getTitle() + " clicked!",
+                    Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 
@@ -75,7 +112,7 @@ public class CrimeListFragment extends Fragment {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             //Use the inflator to inflate the default android list view.
             //We did not write this layout file. It is a standard android one.
-            View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = layoutInflater.inflate(R.layout.list_item_crime, parent, false);
             //Return a new crimeHolder and pass in the view we just created.
             return new CrimeHolder(view);
         }
@@ -85,8 +122,9 @@ public class CrimeListFragment extends Fragment {
             //Get the crime out of the list of crimes that is declared
             //on the inner adapter class we wrote.
             Crime crime = mCrimes.get(position);
-            //Set the text on the viewHolders textview widget.
-            holder.mTitleTextView.setText(crime.getTitle());
+            //Set the data from the crime object
+            //to the viewHolders various widgets.
+            holder.bindCrime(crime);
         }
 
         @Override
