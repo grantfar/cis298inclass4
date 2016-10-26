@@ -13,20 +13,53 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.UUID;
+
 /**
  * Created by dbarnes on 10/5/2016.
  */
 public class CrimeFragment extends Fragment {
+
+    private static final String ARG_CRIME_ID = "crime_id";
 
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckbox;
 
+    //This method allows any class the ability to call this method
+    //and get a new properly formatted fragment. Since we want any
+    //new fragment to have the information from a specific crime
+    //we will require that this method be used, to create the new
+    //fragment.
+    public static CrimeFragment newInstance(UUID crimeId) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_CRIME_ID, crimeId);
+
+        CrimeFragment fragment = new CrimeFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCrime = new Crime();
+        //Get the UUID out from the fragment arguments.
+        //In order to get the UUID out from the arguments we need
+        //to use getSerializableExtra. That method allows us to get
+        //out an object that was stored as an Arg. The catch is that
+        //the object we want to store must implement the Serializable
+        //interface in order to be able to be sent in the args, and then
+        //retrived with getSerializableExtra.
+
+        //The getArguments method will return a bundle object that was
+        //set when the fragment got created. We have created a static
+        //method at the top of this file to get a new fragment created.
+        //That method accepts a UUID and then stores it in the args
+        //for the new fragment. We then get the UUID out right here.
+        UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
+
+        mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
 
     @Nullable
@@ -45,6 +78,7 @@ public class CrimeFragment extends Fragment {
         //we need to call the findViewById that is part of the view we just created.
         //aside from that, it operates the same.
         mTitleField = (EditText)v.findViewById(R.id.crime_title);
+        mTitleField.setText(mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -68,6 +102,7 @@ public class CrimeFragment extends Fragment {
         mDateButton.setEnabled(false);
 
         mSolvedCheckbox = (CheckBox)v.findViewById(R.id.crime_solved);
+        mSolvedCheckbox.setChecked(mCrime.isSolved());
         mSolvedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

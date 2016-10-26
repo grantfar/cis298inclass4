@@ -1,5 +1,6 @@
 package edu.kvcc.cis298.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -89,10 +90,8 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(),
-                    mCrime.getTitle() + " clicked!",
-                    Toast.LENGTH_SHORT)
-                    .show();
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            startActivity(intent);
         }
     }
 
@@ -133,6 +132,14 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        //This will update the UI when returning to this fragment
+        //from the detail view one.
+        updateUI();
+    }
+
     private void updateUI() {
         //This is using the static method on the CrimeLab class
         //to return the singleton. This will get us our one and only one
@@ -144,12 +151,18 @@ public class CrimeListFragment extends Fragment {
         //that we can send over to the CrimeAdapter.
         List<Crime> crimes = crimeLab.getCrimes();
 
-        //Create a new CrimeAdapter and send the crimes we just got
-        //over to it. This way the adapter will have the list of crimes
-        //it can use to make new viewholders and bind data to the viewholder
-        mAdapter = new CrimeAdapter(crimes);
+        if (mAdapter == null) {
+            //Create a new CrimeAdapter and send the crimes we just got
+            //over to it. This way the adapter will have the list of crimes
+            //it can use to make new viewholders and bind data to the viewholder
+            mAdapter = new CrimeAdapter(crimes);
 
-        //Set the adapter on the recyclerview.
-        mCrimeRecyclerView.setAdapter(mAdapter);
+            //Set the adapter on the recyclerview.
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else {
+            //Notify the adapter that data may have changed and that
+            //it should reload the data using the existing adapter.
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }
