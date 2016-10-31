@@ -21,6 +21,14 @@ public class Crime {
         mDate = new Date();
     }
 
+    //Make a 4 parameter constructor to restore a crime from stored data
+    public Crime(UUID uuid, String title, Date date, boolean isSolved) {
+        mId = uuid;
+        mTitle = title;
+        mDate = date;
+        mSolved = isSolved;
+    }
+
     //Getters and Setters
     public UUID getId() {
         return mId;
