@@ -35,6 +35,8 @@ public class CrimeListFragment extends Fragment {
     //Bool to know whether the subtitle is being shown or not.
     private boolean mSubtitleVisible;
 
+    private Menu mMenu;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -179,12 +181,9 @@ public class CrimeListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list, menu);
 
-        MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
-        if (mSubtitleVisible) {
-            subtitleItem.setTitle(R.string.hide_subtitle);
-        } else {
-            subtitleItem.setTitle(R.string.show_subtitle);
-        }
+        mMenu = menu;
+
+        updateSubtitle();
     }
 
     //This method gets called everytime any item in the menu is selected
@@ -215,7 +214,6 @@ public class CrimeListFragment extends Fragment {
 
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
-                getActivity().invalidateOptionsMenu();
                 updateSubtitle();
                 return true;
 
@@ -259,24 +257,34 @@ public class CrimeListFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         }
 
-        updateSubtitle();
+        if (mMenu != null) {
+            updateSubtitle();
+        }
     }
 
     private void updateSubtitle() {
-        //Get the crimelab
-        CrimeLab crimeLab = CrimeLab.get(getActivity());
-        //Get all the crimes in the crime lab and get the size of that list
-        int crimeCount = crimeLab.getCrimes().size();
-        //Create a local string from the string resource that is
-        //the subtitle format. The format may be incorrect depending on the
-        //version of android you are developing on??? We have the format
-        //set as a string denoted by %1$s, however it might need to be
-        //%1$d. S is for string, d is for double? diget? It's for numbers!
-        String subtitle = getString(R.string.subtitle_format, crimeCount);
+
+        MenuItem subtitleItem = mMenu.findItem(R.id.menu_item_show_subtitle);
+        String subtitle = null;
+
+        if (mSubtitleVisible) {
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        } else {
+            subtitleItem.setTitle(R.string.show_subtitle);
+        }
 
         //If we are hiding the subtitle, set the subtitle to null.
-        if (!mSubtitleVisible) {
-            subtitle = null;
+        if (mSubtitleVisible) {
+            //Get the crimelab
+            CrimeLab crimeLab = CrimeLab.get(getActivity());
+            //Get all the crimes in the crime lab and get the size of that list
+            int crimeCount = crimeLab.getCrimes().size();
+            //Create a local string from the string resource that is
+            //the subtitle format. The format may be incorrect depending on the
+            //version of android you are developing on??? We have the format
+            //set as a string denoted by %1$s, however it might need to be
+            //%1$d. S is for string, d is for double? diget? It's for numbers!
+            subtitle = getString(R.string.subtitle_format, crimeCount);
         }
 
         //Get a reference to the activity so that we can set the subtitle
