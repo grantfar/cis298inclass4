@@ -1,6 +1,7 @@
 package edu.kvcc.cis298.criminalintent;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -12,6 +13,8 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.UUID;
 
+import edu.kvcc.cis298.criminalintent.database.CrimeBaseHelper;
+
 /**
  * Created by dbarnes on 10/19/2016.
  */
@@ -19,6 +22,9 @@ public class CrimeLab {
     //Static variable to hold the instance of the CrimeLab
     private static CrimeLab sCrimeLab;
     private List<Crime> mCrimes;
+
+    //Class level variable to hold the sqlite database.
+    private SQLiteDatabase mDatabase;
     //This context will be the hosting activity. It will get
     //assigned in the constructor.
     private Context mContext;
@@ -40,7 +46,10 @@ public class CrimeLab {
         //Create a new array list of crimes
         mCrimes = new ArrayList<>();
         //Set the class level context to the one passed in.
-        mContext = context;
+        mContext = context.getApplicationContext();
+        //Set the class level database
+        mDatabase = new CrimeBaseHelper(mContext)
+                .getWritableDatabase();
 
         //Load the crime list
         loadCrimeList();
