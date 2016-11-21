@@ -16,8 +16,17 @@ public class Crime {
 
     //Constructor
     public Crime() {
-        //Generate unique id
-        mId = UUID.randomUUID();
+        //Call the below constructor and send over
+        //a randomly generated UUID since one was not
+        //sent to this constructor.
+        this(UUID.randomUUID());
+    }
+
+    //Create a new Crime object from a given
+    //UUID parameter. Will be used to create a new Crime
+    //when reading from the database.
+    public Crime(UUID id) {
+        mId = id;
         mDate = new Date();
     }
 

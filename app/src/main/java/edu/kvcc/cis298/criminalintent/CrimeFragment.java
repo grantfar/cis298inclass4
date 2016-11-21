@@ -151,6 +151,17 @@ public class CrimeFragment extends Fragment {
         }
     }
 
+    //This will get called right before this fragment is paused.
+    //It will happen most likely when the app is returning to the
+    //list of items.
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        //Get the crimLab and update the current crime in DB.
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+    }
+
     private void updateDate() {
         mDateButton.setText(mCrime.getDate().toString());
     }

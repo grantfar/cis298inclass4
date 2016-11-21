@@ -68,7 +68,7 @@ public class CrimeListFragment extends Fragment {
         }
 
         //Call the updateUI method which will setup the recyclerView with data.
-        updateUI();
+        //updateUI();
 
         //return the view
         return view;
@@ -156,6 +156,11 @@ public class CrimeListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mCrimes.size();
+        }
+
+        //Create a method to set the crimes for the adapter
+        public void setCrimes(List<Crime> crimes) {
+            mCrimes = crimes;
         }
     }
 
@@ -254,6 +259,10 @@ public class CrimeListFragment extends Fragment {
             //Set the adapter on the recyclerview.
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
+            //Set the crimes for the adapter once one of the crimes
+            //has been updated.
+            mAdapter.setCrimes(crimes);
+
             //Notify the adapter that data may have changed and that
             //it should reload the data using the existing adapter.
             mAdapter.notifyDataSetChanged();
