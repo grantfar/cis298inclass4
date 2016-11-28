@@ -25,6 +25,8 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
 
     //Add a variable for the class level context
     Context mContext;
+    //Add a flag to know whether to seed the database or not
+    boolean mSeedDatabase;
 
     //Version number that can be used to trigger a call to onUpgrade.
     //If when the application starts, the existing database version number
@@ -37,6 +39,8 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
     public CrimeBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
         mContext = context;
+        //Initalize the seed flag to false
+        mSeedDatabase = false;
     }
 
     //onCreate method that will be called to create the database
@@ -53,9 +57,8 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
                 ")"
         );
 
-        //Now that the table is created, we can use the CSV
-        //to seed the database with some dummy data.
-        //loadCrimeList();
+        //Flip the seed flag to true
+        mSeedDatabase = true;
     }
 
     //onUpgrade method that will be called if the version number
@@ -63,6 +66,18 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Going to leave this blank. We won't do work here.
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+
+        //Check to see if we should seed the database
+        //If mSeedDatabase is true, we should seed it.
+        if (mSeedDatabase) {
+            //Call the load crime list method to do the seed.
+            loadCrimeList();
+        }
     }
 
     private void loadCrimeList() {
