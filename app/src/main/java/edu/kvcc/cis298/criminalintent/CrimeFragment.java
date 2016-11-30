@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,6 +165,50 @@ public class CrimeFragment extends Fragment {
 
     private void updateDate() {
         mDateButton.setText(mCrime.getDate().toString());
+    }
+
+    private String getCrimeReport() {
+
+        //Set the string for whether the crime is solved to null
+        String solvedString = null;
+
+        //If the crime is solved, we will set string to the solved
+        //string stored in strings.xml. Otherwise, the unsolved string.
+        if (mCrime.isSolved()) {
+            solvedString = getString(R.string.crime_report_solved);
+        } else {
+            solvedString = getString(R.string.crime_report_unsolved);
+        }
+
+        //Declare a date format to use on the crime date
+        String dateFormat = "EEE, MMM dd";
+        //Get a string version of the data formated by the date format
+        String dateString = DateFormat.format(dateFormat, mCrime.getDate())
+                                .toString();
+
+        //Get the suspect from the crime. It might be null if there is not
+        //one set
+        String suspect = mCrime.getSuspect();
+
+        //If the suspect is null, use the unsolved string from strings.xml
+        //otherwise use the solved string, and pass over the suspect as
+        //the parameter for that string.
+        if (suspect == null) {
+            suspect = getString(R.string.crime_report_no_suspect);
+        } else {
+            suspect = getString(R.string.crime_report_suspect, suspect);
+        }
+
+        //Create the final report string using the above created strings
+        //as the parameters for the crime_report string.
+        String report = getString(R.string.crime_report,
+                            mCrime.getTitle(),
+                            dateString,
+                            solvedString,
+                            suspect);
+
+        //Return the final built report string
+        return report;
     }
 }
 

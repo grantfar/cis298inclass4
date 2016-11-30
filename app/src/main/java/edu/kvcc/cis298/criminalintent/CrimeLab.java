@@ -157,6 +157,16 @@ public class CrimeLab {
         values.put(CrimeTable.Cols.TITLE, crime.getTitle());
         values.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
         values.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 :0);
+
+        //When a crime is added, this content values is used to get
+        //the data all put together in a single object for insertion
+        //We don't set a suspect on Crime object creation, so the
+        //getSuspect method will always return null until the
+        //new buttons to select a suspect are used.
+        //This means that all of our seeds will set the suspect
+        //to null. It is okay to have a null as a value in the db.
+        values.put(CrimeTable.Cols.SUSPECT, crime.getSuspect());
+
         //Return the set of values.
         return values;
     }
