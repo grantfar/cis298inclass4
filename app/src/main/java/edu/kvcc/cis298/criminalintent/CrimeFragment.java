@@ -29,11 +29,13 @@ public class CrimeFragment extends Fragment {
     private static final String DIALOG_DATE = "DialogDate";
 
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_CONTACT = 1;
 
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckbox;
+    private Button mReportButton;
 
     //This method allows any class the ability to call this method
     //and get a new properly formatted fragment. Since we want any
@@ -126,7 +128,18 @@ public class CrimeFragment extends Fragment {
                 mCrime.setSolved(isChecked);
             }
         });
-
+        mReportButton = (Button) v.findViewById(R.id.crime_report);
+        mReportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT,getCrimeReport());
+                i.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.crime_report_subject));
+                i.createChooser(i,getString(R.string.send_report));
+                startActivity(i);
+            }
+        });
         return v;
     }
 
